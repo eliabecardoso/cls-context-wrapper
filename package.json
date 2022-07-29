@@ -1,0 +1,15 @@
+{
+  "name": "@eliabecardoso/cls-context-wrapper",
+  "version": "1.0.0",
+  "description": "A wrapper of the cls-hooked lib to use as a middleware",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node index"
+  },
+  "author": "Eliabe Henrique dos Santos Cardoso",
+  "license": "ISC",
+  "dependencies": {
+    "@eliabecardoso/cls-hooked": "^1.0.4"
+  }
+}
