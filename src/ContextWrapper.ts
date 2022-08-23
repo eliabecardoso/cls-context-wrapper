@@ -1,13 +1,13 @@
-const Context = require('./Context');
-const { errorHandler } = require('./utils');
+import Context from './Context';
+import { errorHandler, middlewareStrategy } from './utils';
 
 /**
  * @type {Context}
  */
-let instance;
+let instance: Context | null;
 
-class ContextWrapper extends Context {
-  static setRequestId(value) {
+export default class ContextWrapper extends Context {
+  static setRequestId(value: string | number) {
     if (!instance) return null;
 
     return instance.set('requestId', value);
@@ -19,7 +19,7 @@ class ContextWrapper extends Context {
     return instance.get('requestId');
   }
 
-  static setUserSession(value) {
+  static setUserSession(value: defaultObj) {
     if (!instance) return null;
 
     return instance.set('user', value);
@@ -31,23 +31,20 @@ class ContextWrapper extends Context {
     return instance.get('user') || {};
   }
 
-  static middleware(...args) {
-    if (!instance) return null;
+  static middleware(...args: any[]) {
+    const { req, res, next } = middlewareStrategy(args);
 
-    if (args[0] && args[0].req) {
-      const [{ req, res }, ...rest] = args;
-      return instance.use(req, res, ...rest);
-    }
+    if (!instance) return next();
 
-    return instance.use(...args);
+    instance.use(req, res, next);
   }
 
-  static getInstance(params = {}) {
+  static getInstance(params: { name: string; options: any }) {
     if (!instance) {
       if (!params.name) {
         errorHandler(new Error('[ContextWrapper] Missed passing name param. Default Name: MyApp'));
 
-        params.name = 'MyApp'
+        params.name = 'MyApp';
       }
 
       instance = new Context(params);
@@ -60,5 +57,3 @@ class ContextWrapper extends Context {
     instance = null;
   }
 }
-
-module.exports = ContextWrapper;

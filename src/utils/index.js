@@ -1,12 +1,12 @@
 const devEnvs = ['dev', 'develop', 'development', 'test'];
 
-function getProp( object, keys, defaultVal ){
-  keys = Array.isArray( keys )? keys : keys.split('.');
+export function getProp(object, keys, defaultVal) {
+  keys = Array.isArray(keys) ? keys : keys.split('.');
   object = object[keys[0]];
-  if( object && keys.length>1 ){
-    return getProp( object, keys.slice(1) );
+  if (object && keys.length > 1) {
+    return getProp(object, keys.slice(1));
   }
-  return object === undefined? defaultVal : object;
+  return object === undefined ? defaultVal : object;
 }
 
 const errorHandler = (error) => {

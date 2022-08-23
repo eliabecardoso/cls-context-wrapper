@@ -13,10 +13,10 @@ class Context {
    * @param {string} params.requestId.key
    * @param {string} params.requestId.value
    */
-   constructor({ name, requestId }) {
+  constructor({ name, requestId }) {
     this.name = name;
     this.requestId = requestId || { auto: true };
-    this.#ns = cls.createNamespace(this.name);
+    this.#ns = cls.createNamespace(this.name).active;
   }
   set(key, value) {
     try {
@@ -28,7 +28,7 @@ class Context {
     } catch (error) {
       errorHandler(error);
 
-      return null;    
+      return null;
     }
   }
 
