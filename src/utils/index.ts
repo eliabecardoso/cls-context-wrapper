@@ -1,10 +1,10 @@
-const devEnvs = ['dev', 'develop', 'development', 'test'];
+const devEnvs = [undefined, 'dev', 'develop', 'development', 'test'];
 
-export const getProp = (object: { [key: string]: any }, keys: string | Array<string>, defaultVal?: any): any => {
+export const get = (object: { [key: string]: any }, keys: string | Array<string>, defaultVal?: any): any => {
   const auxKeys: Array<string> = Array.isArray(keys) ? keys : keys.split('.');
   const auxObject = object[auxKeys[0]];
   if (auxObject && auxKeys.length > 1) {
-    return getProp(auxObject, auxKeys.slice(1));
+    return get(auxObject, auxKeys.slice(1));
   }
   return auxObject === undefined ? defaultVal : auxObject;
 };

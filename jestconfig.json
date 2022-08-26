@@ -4,5 +4,8 @@
   },
   "testRegex": "(/tests/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
   "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"],
-  "modulePathIgnorePatterns": ["tests/performance"]
+  "modulePathIgnorePatterns": ["tests/performance"],
+  "verbose": true,
+  "silent": true,
+  "detectOpenHandles": true
 }

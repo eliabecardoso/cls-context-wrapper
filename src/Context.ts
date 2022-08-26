@@ -1,6 +1,14 @@
-import cls from '@eliabecardoso/cls-hooked';
-import { v4 } from 'uuid';
-import { getProp, errorHandler } from './utils';
+import * as cls from '@eliabecardoso/cls-hooked';
+import * as uuid from 'uuid';
+import * as utils from './utils';
+
+const { v4 } = uuid;
+const { get, errorHandler } = utils;
+
+const messages = {
+  nsNotExists: 'The namespace not exists (destroy called before).',
+  keyInvalid: 'The key is nullable or invalid type.',
+};
 
 interface InstanceParams {
   readonly name: string;
@@ -9,30 +17,71 @@ interface InstanceParams {
 
 interface RequestIDConfig {
   enable: boolean;
-  key: string;
-  value: string;
+  valuePath?: string;
 }
 
 interface Options {
-  requestId: RequestIDConfig;
+  requestId?: RequestIDConfig;
+}
+
+interface CheckParams {
+  key?: string;
 }
 
 export default class Context {
   name: string;
-  options: Options;
+  options?: Options;
   private ns: any;
 
   constructor({ name, options }: InstanceParams) {
     this.name = name;
     this.options = options;
 
-    this.ns = cls.createNamespace(this.name || 'MyApp');
+    this.ns = this.createNamespace();
+  }
+
+  private createNamespace(): any {
+    if (cls.getNamespace(this.name)) {
+      throw new Error(`The context ${this.name} already exists. Operation not permitted.`);
+    }
+    
+    return cls.createNamespace(this.name || 'MyApp');
+  }
+
+  destroyNamespace(): void {
+    if (cls.getNamespace(this.name)) cls.destroyNamespace(this.name);
+    this.ns = null;
+  }
+
+  isNamespaceActive(): boolean {
+    return !!this.ns;
+  }
+
+  run(callback: Function): Function {
+    return this.ns.run(callback);
+  }
+
+  runAndReturn(callback: Function): Function {
+    return this.ns.runAndReturn(callback);
+  }
+
+  async runPromise(promise: Function): Promise<any> {
+    return this.ns.runPromise(promise);
+  }
+
+  private check(checkParams?: CheckParams): void {
+    if (!this.ns) throw new Error(messages.nsNotExists);
+
+    if (!checkParams) return;
+
+    const { key } = checkParams;
+
+    if (key && typeof key !== 'string') throw new Error(messages.keyInvalid); 
   }
 
   set(key: string, value: any): boolean {
     try {
-      if (!key || !value) throw new Error('Missing params.');
-
+      this.check({ key });
       this.ns.set(key, value);
 
       return true;
@@ -45,8 +94,8 @@ export default class Context {
 
   get(key: string): any {
     try {
-      if (!key) throw new Error('Missing key param.');
-
+      this.check({ key });
+  
       return this.ns.get(key);
     } catch (error: any) {
       errorHandler(error as Error);
@@ -56,6 +105,8 @@ export default class Context {
   }
 
   use(req: defaultObj, res: defaultObj, next: Function): void {
+    this.check();
+
     try {
       this.ns.bindEmitter(req);
       this.ns.bindEmitter(res);
@@ -72,12 +123,13 @@ export default class Context {
     }
   }
 
-  preset(req: any): void {
-    if (this.options.requestId.enable) {
-      const { key: k, value: v } = this.options.requestId;
+  private preset(req: any): void {
+    if (this.options?.requestId?.enable) {
+      const { valuePath } = this.options.requestId;
 
-      req[getProp(req, k, 'requestId')] = getProp(req, v, req.requestId || req.headers['x-request-id'] || v4());
-      this.set('requestId', req.requestId);
+      const value = get(req, valuePath || req.headers && req.headers['x-request-id'] || 'requestId', v4());
+
+      this.set('requestId', value);
     }
   }
 }

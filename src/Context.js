@@ -1,6 +1,6 @@
 const cls = require('@eliabecardoso/cls-hooked');
 const { v4 } = require('uuid');
-const { getProp, errorHandler } = require('./utils');
+const { getProp, errorHandler } = require('./utils/index.js');
 
 class Context {
   #ns;
