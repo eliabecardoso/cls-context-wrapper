@@ -44,7 +44,7 @@ export default class Context {
     if (cls.getNamespace(this.name)) {
       throw new Error(`The context ${this.name} already exists. Operation not permitted.`);
     }
-    
+
     return cls.createNamespace(this.name || 'MyApp');
   }
 
@@ -57,15 +57,15 @@ export default class Context {
     return !!this.ns;
   }
 
-  run(callback: Function): Function {
+  run(callback: () => any): () => any {
     return this.ns.run(callback);
   }
 
-  runAndReturn(callback: Function): Function {
+  runAndReturn(callback: () => any): () => any {
     return this.ns.runAndReturn(callback);
   }
 
-  async runPromise(promise: Function): Promise<any> {
+  async runPromise(promise: () => any): Promise<any> {
     return this.ns.runPromise(promise);
   }
 
@@ -76,7 +76,7 @@ export default class Context {
 
     const { key } = checkParams;
 
-    if (key && typeof key !== 'string') throw new Error(messages.keyInvalid); 
+    if (key && typeof key !== 'string') throw new Error(messages.keyInvalid);
   }
 
   set(key: string, value: any): boolean {
@@ -95,7 +95,7 @@ export default class Context {
   get(key: string): any {
     try {
       this.check({ key });
-  
+
       return this.ns.get(key);
     } catch (error: any) {
       errorHandler(error as Error);
@@ -104,7 +104,7 @@ export default class Context {
     }
   }
 
-  use(req: defaultObj, res: defaultObj, next: Function): void {
+  use(req: defaultObj, res: defaultObj, next: () => any): void {
     this.check();
 
     try {
@@ -127,7 +127,7 @@ export default class Context {
     if (this.options?.requestId?.enable) {
       const { valuePath } = this.options.requestId;
 
-      const value = get(req, valuePath || req.headers && req.headers['x-request-id'] || 'requestId', v4());
+      const value = get(req, valuePath || (req.headers && req.headers['x-request-id']) || 'requestId', v4());
 
       this.set('requestId', value);
     }

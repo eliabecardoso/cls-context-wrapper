@@ -1,7 +1,7 @@
 const devEnvs = [undefined, 'dev', 'develop', 'development', 'test'];
 
-export const get = (object: { [key: string]: any }, keys: string | Array<string>, defaultVal?: any): any => {
-  const auxKeys: Array<string> = Array.isArray(keys) ? keys : keys.split('.');
+export const get = (object: { [key: string]: any }, keys: string | string[], defaultVal?: any): any => {
+  const auxKeys: string[] = Array.isArray(keys) ? keys : keys.split('.');
   const auxObject = object[auxKeys[0]];
   if (auxObject && auxKeys.length > 1) {
     return get(auxObject, auxKeys.slice(1));
@@ -17,7 +17,7 @@ export const errorHandler = (error: Error) => {
   }
 };
 
-export const middlewareStrategy = (...args: any[]): { req: defaultObj; res: defaultObj; next: Function } => {
+export const middlewareStrategy = (...args: any[]): { req: defaultObj; res: defaultObj; next: () => any } => {
   if (args[0] && args[0].req) return { req: args[0].req, res: args[0].req, next: args[1] };
 
   return { req: args[0], res: args[1], next: args[2] };
