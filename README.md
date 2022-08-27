@@ -1,5 +1,6 @@
-# cls-context-wrapper
-cls-tests-passed.png
+# cls-context-wrapper (Typescript)
+[![Build Status](https://api.travis-ci.com/eliabecardoso/cls-context-wrapper.svg?branch=main)](https://app.travis-ci.com/github/eliabecardoso/cls-context-wrapper)
+
 ---
 ### Continuous-Local-Storage Context Wrapper.
 
@@ -84,7 +85,6 @@ const ContextWrapper = require('@eliabecardoso/cls-context-wrapper');
 
     doSomething(); // print "bar"
   });
-
   // or
   const result = instance.runAndReturn((namespace) => {
     ContextWrapper.set('foo', 'bar');
@@ -128,5 +128,54 @@ const ContextWrapper = require('@eliabecardoso/cls-context-wrapper');
     });
 })();
 ```
+
+Note: Context class is also available to use in a particular case.
+
 ---
 ### Methods
+
+- `static getInstance(params?: { name: string; options: defaultObj }): Context`: use to create an singleton instance or get the created instance (params is optional, but it is recommended to pass).
+  - `params?.name: string`: name of the instance namespace context.
+  - `params?.options?: object`: options.
+  - `params?.options?.requestId?: object`: requestId config.
+  - `params?.options?.requestId?.enable: boolean`: to enable requestId auto set. Default: true (if not passed params in the getInstance method in instance).
+  - `params?.options?.requestId?.valuePath: string?`: the path if a requestId already exists in the `req` middleware param, e.g.: 'reqId' or 'headers.reqId'. (only available if middleware method is used). If the valuePath is not passed, the `middleware` method will try to fetch from `headers['x-request-id']`or `requestId` (respectively). Default value: uuid.v4.
+
+<br />
+
+- `static destroy(): void`: whenever you are going to delete, remove or no longer use the Instance, call destroy to remove the created namespace context. If `getInstance` is called after `destroy`, will be created a new instance.
+
+<br />
+
+- `static set(key: string, value: any): boolean | undefined`: set a key/value on the namespace context.
+
+<br />
+
+- `static get(key: string): any | undefined`: retrieve a value previously recorded.
+
+<br />
+
+- `static setRequestId(value: string | number): boolean | undefined`: set manually the requestId.
+
+<br />
+
+- `static getRequestId(): string | number | undefined`: get requestId value 
+
+<br />
+
+- `static setUserSession(value: defaultObj | any): boolean | undefined` 
+: set authenticated user from the request.
+
+<br />
+
+- `static getUserSession(): defaultObj | any | undefined`: get authenticated user from the request.
+
+<br />
+
+- `middleware(...args: any[]): void`: middleware (app.use(middleware)). Also available for koa like (ctx, next).
+
+---
+
+For contact, feel free to email me: eliabe.hc@gmail.com.
+
+Enjoy it!
