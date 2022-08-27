@@ -13,16 +13,18 @@
     "prepare": "npm run build",
     "prepublishOnly": "npm test && npm run lint",
     "preversion": "npm run lint",
-    "version": "npm run format && git add -A src"
+    "version": "npm run format && git add -A src",
+    "postversion": "git push && git push --tags"
   },
   "files": [
     "lib/**/*"
   ],
   "repository": {
-    "url": "@"
+    "type": "git",
+    "url": "https://github.com/eliabecardoso/cls-context-wrapper"
   },
-  "author": "Eliabe Henrique dos Santos Cardoso",
-  "license": "ISC",
+  "author": "Eliabe Henrique S. Cardoso <eliabe.hc@gmail.com>",
+  "license": "BSD-3-Clause",
   "keywords": [
     "cls context wrapper",
     "cls-hooked",
@@ -33,7 +35,7 @@
     "continuous local storage wrapper"
   ],
   "dependencies": {
-    "@eliabecardoso/cls-hooked": "^1.0.4",
+    "@eliabecardoso/cls-hooked": "^1.0.5",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
