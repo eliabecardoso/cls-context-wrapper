@@ -1,4 +1,4 @@
-const devEnvs = [undefined, 'dev', 'develop', 'development', 'test'];
+const devEnvs = ['dev', 'develop', 'development', 'test'];
 
 export const get = (object: { [key: string]: any }, keys: string | string[], defaultVal?: any): any => {
   const auxKeys: string[] = Array.isArray(keys) ? keys : keys.split('.');
