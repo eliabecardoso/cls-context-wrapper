@@ -116,8 +116,8 @@ export default class Context {
 
         next();
       });
-    } catch (error: any) {
-      errorHandler(error as Error);
+    } catch (err: any) {
+      errorHandler(err as Error);
 
       next();
     }
@@ -125,7 +125,7 @@ export default class Context {
 
   private preset(req: any): void {
     if (this.options?.requestId?.enable) {
-      const { valuePath } = this.options.requestId;
+      const { valuePath } = this.options?.requestId;
 
       const value = get(req, valuePath || (req.headers && req.headers['x-request-id']) || 'requestId', v4());
 

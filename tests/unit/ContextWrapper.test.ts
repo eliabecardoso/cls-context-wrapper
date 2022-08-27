@@ -19,6 +19,12 @@ describe('ContextWrapper', () => {
     expect(instance).toBeInstanceOf(Context);
   });
 
+  it('should create the instance of Context class (using default config)', () => {
+    const instance: Context = ContextWrapper.getInstance();
+
+    expect(instance).toBeInstanceOf(Context);
+  });
+
   it('should destroy the instance of Context class', () => {
     const instance: Context = ContextWrapper.getInstance({ ...instanceParams });
     ContextWrapper.destroy();
@@ -94,7 +100,7 @@ describe('ContextWrapper', () => {
     };
 
     const someMethod = () => {
-      expect(ContextWrapper.getRequestId().length).toBe(36);
+      expect(ContextWrapper.getRequestId()?.toString().length).toBe(36);
     };
     
     instance.run(() => {
@@ -140,7 +146,7 @@ describe('ContextWrapper', () => {
     const res = new EventEmitter();
     const next = (cb?: Function) => {
       try {
-        expect(ContextWrapper.getRequestId().length).toBe(36);
+        expect(ContextWrapper.getRequestId()?.toString().length).toBe(36);
 
         if (cb) cb();
 
@@ -160,7 +166,7 @@ describe('ContextWrapper', () => {
     const res = new EventEmitter();
     const next = (cb?: Function) => {
       try {
-        expect(ContextWrapper.getRequestId().length).toBe(36);
+        expect(ContextWrapper.getRequestId()?.toString().length).toBe(36);
 
         if (cb) cb();
 

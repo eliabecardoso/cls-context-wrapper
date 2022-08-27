@@ -13,11 +13,20 @@ describe('Context', () => {
     if (context) context.destroyNamespace();
   });
 
-  it('should valid a instance of the Context class', () => {
+  it('should valid an instance of the Context class', () => {
     context = new Context({ ...instanceParams });
     expect(context).toBeInstanceOf(Context);
     expect(context.name).toBe(instanceParams.name);
     expect(context.options).toMatchObject(instanceParams.options);
+  });
+
+  it('shouldnt create a new instance with same context name', () => {
+    try {
+      new Context({ ...instanceParams });
+      new Context({ ...instanceParams });
+    } catch (err: any) {
+      expect(err.message).toBe('The context TestApp already exists. Operation not permitted.');
+    }   
   });
 
   it('should valid a context is active', () => {

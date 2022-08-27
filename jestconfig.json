@@ -7,5 +7,14 @@
   "modulePathIgnorePatterns": ["tests/performance"],
   "verbose": true,
   "silent": true,
-  "detectOpenHandles": true
+  "detectOpenHandles": true,
+  "collectCoverage": true,
+  "coverageThreshold": {
+    "global": {
+      "statements": 92,
+      "branches": 69,
+      "functions": 100,
+      "lines": 92
+    }
+  }
 }
