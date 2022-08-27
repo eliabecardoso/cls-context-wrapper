@@ -7,15 +7,14 @@ import { errorHandler, middlewareStrategy } from './utils';
 let instance: Context | null;
 
 export default class ContextWrapper extends Context {
-  static getInstance(params: { name: string; options: defaultObj }) {
+  static getInstance(params?: { name: string; options: defaultObj }) {
     if (!instance) {
-      if (!params.name) {
+      const defaultParams = { name: 'MyApp', options: { requestId: { enable: true } }};
+      if (!params?.name) {
         errorHandler(new Error('[ContextWrapper] Missed passing name param. Default Name: MyApp'));
-
-        params.name = 'MyApp';
       }
 
-      instance = new Context(params);
+      instance = new Context(params || defaultParams);
     }
 
     return instance;
@@ -24,6 +23,18 @@ export default class ContextWrapper extends Context {
   static destroy() {
     instance?.destroyNamespace();
     instance = null;
+  }
+
+  static set(key: string, value: any) {
+    if (!instance) return null;
+
+    return instance.set(key, value);
+  }
+
+  static get(key: string) {
+    if (!instance) return null;
+
+    return instance.get(key);
   }
 
   static setRequestId(value: string | number) {

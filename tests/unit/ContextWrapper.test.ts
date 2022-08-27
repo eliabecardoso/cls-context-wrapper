@@ -56,6 +56,36 @@ describe('ContextWrapper', () => {
     });
   });
 
+  it('should static set a value in the Context instance', (done) => {
+    const instance: Context = ContextWrapper.getInstance({ ...instanceParams });
+
+    instance.run(() => {
+      try {
+        expect(ContextWrapper.set('prop', 'value')).toBe(true);
+
+        done();
+      } catch (err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should static get a value in the Context instance', (done) => {
+    const instance: Context = ContextWrapper.getInstance({ ...instanceParams });
+
+    instance.run(() => {
+      try {
+        ContextWrapper.set('prop', 'anything')
+
+        expect(ContextWrapper.get('prop')).toBe('anything');
+
+        done();
+      } catch (err) {
+        done(err);
+      }
+    });
+  });
+
   it('should get the requestId in the Context instance', (done) => {
     const instance: Context = ContextWrapper.getInstance({ ...instanceParams });
 
