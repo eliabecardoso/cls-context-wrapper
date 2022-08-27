@@ -6,9 +6,9 @@
 
 This is a Wrapper of the [cls-hooked library (included fixes!)](https://www.npmjs.com/package/@eliabecardoso/cls-hooked)
 
-The ContextWrapper class is a singleton instance of the Context class that use the cls-hooked as your own asynchooks.
+The ContextWrapper class is a singleton instance of the Context class that uses cls-hooked as its own asynchooks.
 
-This wrap is an easy plugin for http libraries (middleware use) and other types of nodejs uses, like service jobs, lambdas and various types of projects.
+This wrap is an easy plugin for http libraries (middleware use) and other types of nodejs uses, like service jobs, lambdas and different types of projects.
 
 Example:
 ```ts
@@ -65,7 +65,10 @@ http.get('http://localhost:8000/test', (res) => {
   });
 });
 ```
-In case you has a particular architecture or problem to solve, you can:
+
+<br />
+
+If you have a specific architecture or problem to solve, you can:
 ```js
 const ContextWrapper = require('@eliabecardoso/cls-context-wrapper');
 
@@ -177,5 +180,7 @@ Note: Context class is also available to use in a particular case.
 ---
 
 For contact, feel free to email me: eliabe.hc@gmail.com.
+
+ps: sorry for any english mistakes. :)
 
 Enjoy it!
