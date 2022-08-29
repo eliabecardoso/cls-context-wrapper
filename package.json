@@ -1,6 +1,6 @@
 {
   "name": "@ehsc/cls-context-wrapper",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A wrapper of the cls-hooked and node:asynchooks libs to use as middleware",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -31,7 +31,7 @@
     "name": "Eliabe Henrique S. Cardoso",
     "email": "eliabe.hc@gmail.com"
   },
-  "license": "BSD-3-Clause",
+  "license": "MIT",
   "keywords": [
     "cls context wrapper",
     "cls-hooked",
