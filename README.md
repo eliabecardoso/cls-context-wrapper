@@ -44,7 +44,7 @@ app.get('/test', (_, res) => {
 });
 
 const server = app.listen(8000, () => {
-  ContextWrapper.getInstance({ name: 'MyApp', options: { requestId: { enable: true } } });
+  ContextWrapper.getInstance({ name: 'MyApp', options: { correlationId: { enable: true } } });
 });
 
 // Request
@@ -137,12 +137,12 @@ Note: Context class is also available to use in a particular case.
 ---
 ### Methods
 
-- `static getInstance(params?: { name: string; options: defaultObj }): Context`: use to create an singleton instance or get the created instance (params is optional, but it is recommended to pass).
+- `static getInstance(params?: { name: string; options: ObjectRecord }): Context`: use to create an singleton instance or get the created instance (params is optional, but it is recommended to pass).
   - `params?.name: string`: name of the instance namespace context.
   - `params?.options?: object`: options.
-  - `params?.options?.requestId?: object`: requestId config.
-  - `params?.options?.requestId?.enable: boolean`: to enable requestId auto set. Default: true (if not passed params in the getInstance method in instance).
-  - `params?.options?.requestId?.valuePath: string?`: the path if a requestId already exists in the `req` middleware param, e.g.: 'reqId' or 'headers.reqId'. (only available if middleware method is used). If the valuePath is not passed, the `middleware` method will try to fetch from `headers['x-request-id']`or `requestId` (respectively). Default value: uuid.v4.
+  - `params?.options?.correlationId?: object`: correlationId config.
+  - `params?.options?.correlationId?.enable: boolean`: to enable correlationId auto set. Default: true (if not passed params in the getInstance method in instance).
+  - `params?.options?.correlationId?.valuePath: string?`: the path if a correlationId already exists in the `req` middleware param, e.g.: 'reqId' or 'headers.reqId'. (only available if middleware method is used). If the valuePath is not passed, the `middleware` method will try to fetch from `headers['X-Correlation-ID']`, `headers['X-Request-ID']` or `requestId` (respectively). Default value: uuid.v4.
 
 <br />
 
@@ -158,20 +158,20 @@ Note: Context class is also available to use in a particular case.
 
 <br />
 
-- `static setRequestId(value: string | number): boolean | undefined`: set manually the requestId.
+- `static setCorrelationId(value: string | number): boolean | undefined`: set manually the correlationId.
 
 <br />
 
-- `static getRequestId(): string | number | undefined`: get requestId value 
+- `static getCorrelationId(): string | number | undefined`: get correlationId value 
 
 <br />
 
-- `static setUserSession(value: defaultObj | any): boolean | undefined` 
+- `static setUserSession(value: ObjectRecord | any): boolean | undefined` 
 : set authenticated user from the request.
 
 <br />
 
-- `static getUserSession(): defaultObj | any | undefined`: get authenticated user from the request.
+- `static getUserSession(): ObjectRecord | any | undefined`: get authenticated user from the request.
 
 <br />
 
