@@ -39,7 +39,7 @@ async function processing(qtty) {
 
   const data = `\n${qtty},${convertToMB(memInit.heapUsed)},${convertToMB(memEnd.heapUsed)},${convertToMB(memInit.rss)},${convertToMB(memEnd.rss)}`;
 
-  fs.appendFile('./test/performance/memory.csv', data, { flag: 'a', encoding: 'utf8' }, () => {});
+  fs.appendFile('./test/performance/memory-cls-hooked.csv', data, { flag: 'a', encoding: 'utf8' }, () => {});
 }
 
 (async () => {

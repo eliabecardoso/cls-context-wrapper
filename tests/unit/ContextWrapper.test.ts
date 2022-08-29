@@ -1,11 +1,11 @@
 import * as EventEmitter from 'events';
 import * as uuid from 'uuid';
-import Context from '../../src/Context';
-import ContextWrapper from '../../src/ContextWrapper';
+import Context from '../../src/context/Context';
+import ContextWrapper from '../../src/context/ContextWrapper';
+import { InstanceParams } from '../../src/context/IContextStrategy';
 
-const instanceParams = {
+const instanceParams: InstanceParams = {
   name: 'TestApp',
-  options: {}
 };
 
 describe('ContextWrapper', () => {
@@ -14,30 +14,38 @@ describe('ContextWrapper', () => {
   });
 
   it('should create the instance of Context class', () => {
-    const instance: Context = ContextWrapper.getInstance({ ...instanceParams });
+    const instance = ContextWrapper.getInstance({ ...instanceParams });
 
     expect(instance).toBeInstanceOf(Context);
   });
 
   it('should create the instance of Context class (using default config)', () => {
-    const instance: Context = ContextWrapper.getInstance();
+    const instance = ContextWrapper.getInstance();
 
     expect(instance).toBeInstanceOf(Context);
   });
 
   it('should destroy the instance of Context class', () => {
-    const instance: Context = ContextWrapper.getInstance({ ...instanceParams });
+    const instance = ContextWrapper.getInstance({ ...instanceParams });
     ContextWrapper.destroy();
 
-    expect(instance.set('prop', 'value')).toBe(false);
+    try {
+      instance.set({ prop: 'value' })
+    } catch (err: any) {
+      expect(err.message).toBe('The Storage not exists (destroy called before).');
+    } finally {
+      expect(instance.storage).toBeUndefined();
+    }
   });
 
   it('should set a value in the Context instance', (done) => {
-    const instance: Context = ContextWrapper.getInstance({ ...instanceParams });
+    const instance = ContextWrapper.getInstance({ ...instanceParams });
 
     instance.run(() => {
       try {
-        expect(instance.set('prop', 'value')).toBe(true);
+        instance.set({ prop: 'value' })
+
+        expect(instance.get('prop')).toBe('value');
 
         done();
       } catch (err) {
@@ -47,11 +55,11 @@ describe('ContextWrapper', () => {
   });
 
   it('should get a value in the Context instance', (done) => {
-    const instance: Context = ContextWrapper.getInstance({ ...instanceParams });
+    const instance = ContextWrapper.getInstance({ ...instanceParams });
 
     instance.run(() => {
       try {
-        instance.set('prop', 'anything')
+        instance.set({ prop: 'anything' });
 
         expect(instance.get('prop')).toBe('anything');
 
@@ -63,11 +71,12 @@ describe('ContextWrapper', () => {
   });
 
   it('should static set a value in the Context instance', (done) => {
-    const instance: Context = ContextWrapper.getInstance({ ...instanceParams });
+    const instance = ContextWrapper.getInstance({ ...instanceParams });
 
     instance.run(() => {
       try {
-        expect(ContextWrapper.set('prop', 'value')).toBe(true);
+        ContextWrapper.set({ 'prop': 'value' });
+        expect(ContextWrapper.get('prop')).toBe('value');
 
         done();
       } catch (err) {
@@ -77,11 +86,11 @@ describe('ContextWrapper', () => {
   });
 
   it('should static get a value in the Context instance', (done) => {
-    const instance: Context = ContextWrapper.getInstance({ ...instanceParams });
+    const instance = ContextWrapper.getInstance({ ...instanceParams });
 
     instance.run(() => {
       try {
-        ContextWrapper.set('prop', 'anything')
+        ContextWrapper.set({ prop: 'anything' });
 
         expect(ContextWrapper.get('prop')).toBe('anything');
 
@@ -92,15 +101,15 @@ describe('ContextWrapper', () => {
     });
   });
 
-  it('should get the requestId in the Context instance', (done) => {
-    const instance: Context = ContextWrapper.getInstance({ ...instanceParams });
+  it('should get the correlationId in the Context instance', (done) => {
+    const instance = ContextWrapper.getInstance({ ...instanceParams });
 
     const middleware = () => {
-      ContextWrapper.setRequestId(uuid.v4());
+      ContextWrapper.setCorrelationId(uuid.v4());
     };
 
     const someMethod = () => {
-      expect(ContextWrapper.getRequestId()?.toString().length).toBe(36);
+      expect(ContextWrapper.getCorrelationId()?.toString().length).toBe(36);
     };
     
     instance.run(() => {
@@ -116,7 +125,7 @@ describe('ContextWrapper', () => {
   });
 
   it('should get the userSession in the Context instance', (done) => {
-    const instance: Context = ContextWrapper.getInstance({ ...instanceParams });
+    const instance = ContextWrapper.getInstance({ ...instanceParams });
 
     const authorization = () => {
       ContextWrapper.setUserSession({ id: 1, user: 'eliabecardoso' });
@@ -144,11 +153,9 @@ describe('ContextWrapper', () => {
   it('should call middleware method without throw error (express like)', (done) => {
     const req = new EventEmitter();
     const res = new EventEmitter();
-    const next = (cb?: Function) => {
+    const next = () => {
       try {
-        expect(ContextWrapper.getRequestId()?.toString().length).toBe(36);
-
-        if (cb) cb();
+        expect(ContextWrapper.getCorrelationId()?.toString().length).toBe(36);
 
         done();
       } catch (err) {
@@ -156,7 +163,7 @@ describe('ContextWrapper', () => {
       }
     };
 
-    ContextWrapper.getInstance({ ...instanceParams, options: { requestId: { enable: true } } });
+    ContextWrapper.getInstance({ ...instanceParams });
 
     ContextWrapper.middleware(req, res, next);
   });
@@ -164,11 +171,10 @@ describe('ContextWrapper', () => {
   it('should call middleware method without throw error (koa like)', (done) => {
     const req = new EventEmitter();
     const res = new EventEmitter();
-    const next = (cb?: Function) => {
+    const next = () => {
       try {
-        expect(ContextWrapper.getRequestId()?.toString().length).toBe(36);
-
-        if (cb) cb();
+        const correlationId = ContextWrapper.getCorrelationId();
+        expect(correlationId?.toString().length).toBe(36);
 
         done();
       } catch (err) {
@@ -176,7 +182,7 @@ describe('ContextWrapper', () => {
       }
     };
 
-    ContextWrapper.getInstance({ ...instanceParams, options: { requestId: { enable: true } } });
+    ContextWrapper.getInstance();
 
     ContextWrapper.middleware({ req, res }, next);
   });

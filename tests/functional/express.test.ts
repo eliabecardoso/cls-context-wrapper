@@ -1,25 +1,30 @@
 import * as http from 'http';
 import * as express from 'express';
-import ContextWrapper from '../../src/ContextWrapper';
+import ContextWrapper from '../../src/context/ContextWrapper';
+import { InstanceParams } from '../../src/context/IContextStrategy';
 
 const app = express();
 
-const instanceParams = {
+const instanceParams: InstanceParams = {
   name: 'TestApp',
-  options: { requestId: { enable: true } },
+  options: { correlationId: { enable: true } },
 };
 
 describe('express', () => {
+  beforeAll(() => { jest.setTimeout(1000000)})
   it('should use ContextWrapper as middleware', (done) => {
     app.use(ContextWrapper.middleware);
+    app.use((err: any, req: any, res: any, next: () => void) => {
+      res.json(err);
+    });
 
     app.use((_, __, next) => {
       try {
         ContextWrapper.setUserSession({ id: 1, user: 'ecardoso' }); // req.user
-        ContextWrapper.set('corporation', 'EHSC');
+        ContextWrapper.set({ corporation: 'EHSC' });
       
         const instance = ContextWrapper.getInstance();
-        if (instance) instance.set('foo', 'bar');
+        if (instance) instance.set({ foo: 'bar' });
 
         next();
       } catch (err) {
@@ -29,7 +34,7 @@ describe('express', () => {
     
     app.get('/test', (_, res) => {
       const result = {
-        reqId: ContextWrapper.getRequestId(),
+        reqId: ContextWrapper.getCorrelationId(),
         user: ContextWrapper.getUserSession(),
         corporation: ContextWrapper.get('corporation'),
         foo: ContextWrapper.getInstance().get('foo')
@@ -38,11 +43,11 @@ describe('express', () => {
       res.status(200).json(result);
     });
 
-    const server = app.listen(8000, () => {
+    const server = app.listen(9999, () => {
       ContextWrapper.getInstance({ ...instanceParams });
     })
 
-    http.get('http://localhost:8000/test', (res) => {
+    const client = http.get('http://localhost:9999/test', (res) => {
       server.close();
       let data: string = '';
 
@@ -59,6 +64,8 @@ describe('express', () => {
       })
       
       res.on('close', () => {
+        client.destroy();
+
         try {
           const result = JSON.parse(data) || {};
 

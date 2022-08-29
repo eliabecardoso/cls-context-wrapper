@@ -17,7 +17,7 @@ export const errorHandler = (error: Error) => {
   }
 };
 
-export const middlewareStrategy = (...args: any[]): { req: defaultObj; res: defaultObj; next: () => any } => {
+export const middlewareStrategy = (...args: any[]): { req: ObjectRecord; res: ObjectRecord; next: () => any } => {
   if (args[0] && args[0].req) return { req: args[0].req, res: args[0].req, next: args[1] };
 
   return { req: args[0], res: args[1], next: args[2] };
