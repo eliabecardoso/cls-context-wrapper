@@ -134,7 +134,7 @@ Note: The Context class is also available for use in other scenarios.
   - Returns an instance that implements the `IContextStrategy` interface, a super set of the [AsyncLocalStorage from node:async_hooks](https://nodejs.org/api/async_context.html#class-asynclocalstorage)(if the Node version is 14.20.0 or major) or [Namespace from cls-hooked lib](https://www.npmjs.com/package/@ehsc/cls-hooked).
   - `IContextStrategy` Methods:
     - `destroy(): void`: whenever you are going to delete, remove or no longer use the Instance, call destroy to remove the instance context. If `getInstance` is called after `destroy`, will be created a new instance.
-    - `run(callback: (...args: any[]) => any): any`: Runs a function synchronously within a context and returns its return value. The storage is not accessible outside of the callback function. The store is accessible to any asynchronous operations created within the callback.
+    - `run(callback: (...args: any[]) => void): void`: Runs a function synchronously within a context and returns its return value. The storage is not accessible outside of the callback function. The store is accessible to any asynchronous operations created within the callback.
     - `runPromise(callback: (...args: any[]) => Promise<void>): void`: Runs a function synchronously within a context and returns its return value. The storage is not accessible outside of the callback function. The store is accessible to any asynchronous operations created within the async callback.
     - `set(store: { [prop: string]: any }): void`: set a value in the context.
     - `get(key?: string): any`: retrieve a value from the context, if key not passed, it retrieve whole object from the context.
