@@ -1,6 +1,6 @@
 const semver = require("semver");
 
-const nodeIsLower = semver.lt(process.versions.node, '12.17.0');
+const nodeIsLower = semver.lt(process.versions.node, '14.20.0');
 
 const coverageDefaultExclude = ['src/**/*.ts', '!src/**/index(.|.d.)ts'];
 
