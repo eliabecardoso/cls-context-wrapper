@@ -26,10 +26,10 @@ app.use(authentication);
 
 app.use((req, res, next) => {
   ContextWrapper.setUserSession(req.user || { id: 1, user: 'ecardoso' });
-  ContextWrapper.set('corporation', 'EHSC');
+  ContextWrapper.set({ organization: 'EHSC' });
 
   const instance = ContextWrapper.getInstance();
-  if (instance) instance.set('foo', 'bar');
+  if (instance) instance.set({ foo: 'bar' });
 
   next();
 });
@@ -38,7 +38,7 @@ app.get('/test', (_, res) => {
   res.json({
     reqId: ContextWrapper.getRequestId(),
     user: ContextWrapper.getUserSession(),
-    corporation: ContextWrapper.get('corporation'),
+    organization: ContextWrapper.get('organization'),
     foo: ContextWrapper.getInstance().get('foo')
   });
 });
@@ -64,6 +64,7 @@ http.get('http://localhost:8000/test', (res) => {
     console.log('data:', JSON.parse(data));
   });
 });
+
 ```
 
 <br />
@@ -77,9 +78,9 @@ const { default: ContextWrapper } = require('@ehsc/cls-context-wrapper');
   const instance = ContextWrapper.getInstance({ name: 'MyApp' });
 
   instance.run(() => {
-    ContextWrapper.set('foo', 'bar');
+    ContextWrapper.set({ foo: 'bar' });
     // or
-    instance.set('foo', 'bar');
+    instance.set({ foo: 'bar' });
 
     // some inner function...
     function doSomething() {
@@ -90,19 +91,23 @@ const { default: ContextWrapper } = require('@ehsc/cls-context-wrapper');
   });
 
   // Warning - Inner Contexts!!!
-  const result = instance.run((namespace) => {
-    ContextWrapper.set('foo', 'bar');
+  instance.run(() => {
+    ContextWrapper.set({ foo: 'bar' });
     // or
-    instance.set('foo', 'bar');
+    instance.set({ foo: 'bar' });
 
     instance.run(() => {
+      ContextWrapper.set({ john: 'doe' });
       // some inner function...
       function doSomething() {
         console.log(ContextWrapper.get('foo'));
       }
 
-      doSomething(); // print "undefined"
+      doSomething(); // print "bar"
+      console.log(ContextWrapper.get('john')); // print "doe"
     });
+
+    console.log(ContextWrapper.get('john')); // print "undefined"
   });
 })();
 
@@ -111,12 +116,16 @@ const { default: ContextWrapper } = require('@ehsc/cls-context-wrapper');
     const instance = ContextWrapper.getInstance({ name: 'MyApp' });
     const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-    instance.runPromise(async (namespace) => {
-      console.time('test');
-      await sleep(10000);
-      console.timeEnd('test');
+    instance.runPromise(async () => {
+
+      ContextWrapper.set({ start: new Date() });
+      await sleep(7000);
+      const end = new Date();
+
+      console.log('response time (ms):', Math.abs(end - ContextWrapper.get('start'))); // print "response time (ms): 700*"
     });
 })();
+
 ```
 
 Note: The Context class is also available for use in other scenarios.
@@ -134,8 +143,8 @@ Note: The Context class is also available for use in other scenarios.
   - Returns an instance that implements the `IContextStrategy` interface, a super set of the [AsyncLocalStorage from node:async_hooks](https://nodejs.org/api/async_context.html#class-asynclocalstorage)(if the Node version is 14.20.0 or major) or [Namespace from cls-hooked lib](https://www.npmjs.com/package/@ehsc/cls-hooked).
   - `IContextStrategy` Methods:
     - `destroy(): void`: whenever you are going to delete, remove or no longer use the Instance, call destroy to remove the instance context. If `getInstance` is called after `destroy`, will be created a new instance.
-    - `run(callback: (...args: any[]) => void): void`: Runs a function synchronously within a context and returns its return value. The storage is not accessible outside of the callback function. The store is accessible to any asynchronous operations created within the callback.
-    - `runPromise(callback: (...args: any[]) => Promise<void>): void`: Runs a function synchronously within a context and returns its return value. The storage is not accessible outside of the callback function. The store is accessible to any asynchronous operations created within the async callback.
+    - `run(callback: () => void): void`: Runs a function synchronously within a context and returns its return value. The storage is not accessible outside of the callback function. The store is accessible to any asynchronous operations created within the callback.
+    - `runPromise(callback: () => Promise<void>): void`: Runs a function synchronously within a context and returns its return value. The storage is not accessible outside of the callback function. The store is accessible to any asynchronous operations created within the async callback.
     - `set(store: { [prop: string]: any }): void`: set a value in the context.
     - `get(key?: string): any`: retrieve a value from the context, if key not passed, it retrieve whole object from the context.
     - `use(req: Request, res: Response, next: () => void): void`: Use like a middleware (express, koa, etc.).
@@ -170,7 +179,7 @@ Note: The Context class is also available for use in other scenarios.
 
 <br />
 
-- `middleware(...args: any[]): void`: all of the middlewares and routes setup can set or read context values if it is called after this middleware, like [asyncLocalStorage.run](https://nodejs.org/api/async_context.html#asynclocalstoragerunstore-callback-args) and [Namespace.run](https://github.com/eliabecardoso/cls-hooked#namespaceruncallback).
+- `middleware(): void`: all of the middlewares and routes setup can set or read context values if it is called after this middleware, like [asyncLocalStorage.run](https://nodejs.org/api/async_context.html#asynclocalstoragerunstore-callback-args) and [Namespace.run](https://github.com/eliabecardoso/cls-hooked#namespaceruncallback).
 
 <br />
 

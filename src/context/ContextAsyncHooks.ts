@@ -21,13 +21,13 @@ export default class ContextAsyncHooks extends Context implements IContextStrate
     this.storage = undefined;
   }
 
-  run(store: any, callback?: (...args: []) => void): void {
+  run(store: any, callback?: () => void): void {
     if (!callback) return this.storage?.run({} as any, store as () => void);
 
     return this.storage?.run(store, callback);
   }
 
-  runPromise(store: any, callback?: (...args: []) => Promise<void>): void {
+  runPromise(store: any, callback?: () => Promise<void>): void {
     if (!callback) {
       this.storage?.run({} as any, store as () => Promise<void>);
 

@@ -28,11 +28,11 @@ export default class ContextLegacy extends Context implements IContextStrategy {
     this.storage = undefined;
   }
 
-  run(callback: (...args: any[]) => void): void {
+  run(callback: () => void): void {
     this.storage?.run(callback);
   }
 
-  runPromise(callback: (...args: any[]) => Promise<void>): void {
+  runPromise(callback: () => Promise<void>): void {
     this.storage?.runPromise(callback);
   }
 

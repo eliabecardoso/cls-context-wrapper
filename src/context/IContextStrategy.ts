@@ -23,13 +23,13 @@ export default interface IContextStrategy {
 
   destroy(): void;
 
-  run(callback: (...args: any[]) => void): void;
+  run(callback: () => void): void;
 
-  run(store: any, callback: (...args: any[]) => void): void;
+  run(store: any, callback: () => void): void;
 
-  runPromise(callback: (...args: any[]) => Promise<void>): void;
+  runPromise(callback: () => Promise<void>): void;
 
-  runPromise(store: any, callback: (...args: any[]) => Promise<void>): void;
+  runPromise(store: any, callback: () => Promise<void>): void;
 
   set(store: ObjectRecord): void;
 
