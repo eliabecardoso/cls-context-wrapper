@@ -1,4 +1,4 @@
-import * as cls from '@eliabecardoso/cls-hooked';
+import * as cls from '@ehsc/cls-hooked';
 import * as uuid from 'uuid';
 import Context from './Context';
 import IContextStrategy, { InstanceParams } from './IContextStrategy';

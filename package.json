@@ -42,7 +42,7 @@
     "continuous local storage wrapper"
   ],
   "dependencies": {
-    "@eliabecardoso/cls-hooked": "^1.0.6",
+    "@ehsc/cls-hooked": "^1.0.0",
     "semver": "^7.3.7",
     "uuid": "^8.3.2"
   },

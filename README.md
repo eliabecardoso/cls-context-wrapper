@@ -4,11 +4,11 @@
 ---
 ### Continuous-Local-Storage Context Wrapper.
 
-This is a Wrapper of the [cls-hooked library (included fixes!)](https://www.npmjs.com/package/@eliabecardoso/cls-hooked)
+This is a Wrapper of the [cls-hooked library (included fixes!)](https://www.npmjs.com/package/@ehsc/cls-hooked) and [AsyncLocalStorage](https://nodejs.org/api/async_context.html#class-asynclocalstorage).
 
-The ContextWrapper class is a singleton instance of the Context class that uses cls-hooked as its own asynchooks.
+The ContextWrapper class is a singleton instance that uses the cls-hooked or AsyncLocalStorage instance as its own Store.
 
-This wrap is an easy plugin for http libraries (middleware use) and other types of nodejs uses, like service jobs, lambdas and different types of projects.
+This wrap is an easy plugin for web application libraries (middleware use) and other types of Node usage like service jobs, lambdas and different types of projects.
 
 Example:
 ```ts
@@ -16,7 +16,7 @@ Example:
 import * as http from 'http';
 import * as express from 'express';
 import authentication from './middlewares/authentication';
-import ContextWrapper from '@eliabecardoso/cls-context-wrapper';
+import ContextWrapper from '@ehsc/cls-context-wrapper';
 
 const app = express();
 
@@ -70,7 +70,7 @@ http.get('http://localhost:8000/test', (res) => {
 
 If you have a specific architecture or problem to solve, you can:
 ```js
-const ContextWrapper = require('@eliabecardoso/cls-context-wrapper');
+const { default: ContextWrapper } = require('@ehsc/cls-context-wrapper');
 
 // Sync
 (() => {
