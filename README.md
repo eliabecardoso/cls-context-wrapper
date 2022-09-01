@@ -76,7 +76,7 @@ const ContextWrapper = require('@eliabecardoso/cls-context-wrapper');
 (() => {
   const instance = ContextWrapper.getInstance({ name: 'MyApp' });
 
-  instance.run((namespace) => {
+  instance.run(() => {
     ContextWrapper.set('foo', 'bar');
     // or
     instance.set('foo', 'bar');
@@ -87,19 +87,6 @@ const ContextWrapper = require('@eliabecardoso/cls-context-wrapper');
     }
 
     doSomething(); // print "bar"
-  });
-  // or
-  const result = instance.runAndReturn((namespace) => {
-    ContextWrapper.set('foo', 'bar');
-    // or
-    instance.set('foo', 'bar');
-
-    // some inner function...
-    function doSomething() {
-      return ContextWrapper.get('foo');
-    }
-
-    return doSomething(); // print "bar"
   });
 
   // Warning - Inner Contexts!!!
@@ -132,50 +119,69 @@ const ContextWrapper = require('@eliabecardoso/cls-context-wrapper');
 })();
 ```
 
-Note: Context class is also available to use in a particular case.
+Note: The Context class is also available for use in other scenarios.
 
 ---
-### Methods
+### ContextWrapper Methods
 
-- `static getInstance(params?: { name: string; options: ObjectRecord }): Context`: use to create an singleton instance or get the created instance (params is optional, but it is recommended to pass).
-  - `params?.name: string`: name of the instance namespace context.
+- `static getInstance(params?: { name: string; options: object }): IContextStrategy`: create a singleton instance.
+  - `params?.name: string`: name of the instance context.
   - `params?.options?: object`: options.
   - `params?.options?.correlationId?: object`: correlationId config.
-  - `params?.options?.correlationId?.enable: boolean`: to enable correlationId auto set. Default: true (if not passed params in the getInstance method in instance).
+  - `params?.options?.correlationId?.enable: boolean`: to enable automatic set of correlationId in `middleware` method. Default: true (if not passed params in the getInstance method in instance).
   - `params?.options?.correlationId?.valuePath: string?`: the path if a correlationId already exists in the `req` middleware param, e.g.: 'reqId' or 'headers.reqId'. (only available if middleware method is used). If the valuePath is not passed, the `middleware` method will try to fetch from `headers['X-Correlation-ID']`, `headers['X-Request-ID']` or `requestId` (respectively). Default value: uuid.v4.
 
-<br />
-
-- `static destroy(): void`: whenever you are going to delete, remove or no longer use the Instance, call destroy to remove the created namespace context. If `getInstance` is called after `destroy`, will be created a new instance.
-
-<br />
-
-- `static set(key: string, value: any): boolean | undefined`: set a key/value on the namespace context.
-
-<br />
-
-- `static get(key: string): any | undefined`: retrieve a value previously recorded.
+  - Returns an instance that implements the `IContextStrategy` interface, a super set of the [AsyncLocalStorage from node:async_hooks](https://nodejs.org/api/async_context.html#class-asynclocalstorage)(if the Node version is 14.20.0 or major) or [Namespace from cls-hooked lib](https://www.npmjs.com/package/@ehsc/cls-hooked).
+  - `IContextStrategy` Methods:
+    - `destroy(): void`: whenever you are going to delete, remove or no longer use the Instance, call destroy to remove the instance context. If `getInstance` is called after `destroy`, will be created a new instance.
+    - `run(callback: (...args: any[]) => any): any`: Runs a function synchronously within a context and returns its return value. The storage is not accessible outside of the callback function. The store is accessible to any asynchronous operations created within the callback.
+    - `runPromise(callback: (...args: any[]) => Promise<void>): void`: Runs a function synchronously within a context and returns its return value. The storage is not accessible outside of the callback function. The store is accessible to any asynchronous operations created within the async callback.
+    - `set(store: { [prop: string]: any }): void`: set a value in the context.
+    - `get(key?: string): any`: retrieve a value from the context, if key not passed, it retrieve whole object from the context.
+    - `use(req: Request, res: Response, next: () => void): void`: Use like a middleware (express, koa, etc.).
 
 <br />
 
-- `static setCorrelationId(value: string | number): boolean | undefined`: set manually the correlationId.
+- `static destroy(): void`: whenever you are going to delete, remove or no longer use the Instance, call destroy to remove the instance context. If `getInstance` is called after `destroy`, will be created a new instance.
 
 <br />
 
-- `static getCorrelationId(): string | number | undefined`: get correlationId value 
+- `static set(store: { [prop: string]: any }): void`: set a key value in the context.
 
 <br />
 
-- `static setUserSession(value: ObjectRecord | any): boolean | undefined` 
-: set authenticated user from the request.
+- `static get(key?: string): any`: read a value previously recorded.
 
 <br />
 
-- `static getUserSession(): ObjectRecord | any | undefined`: get authenticated user from the request.
+- `static setCorrelationId(value: string | number): void`: set the correlation identifier, like ContextWrapper.set({ correlationId: uuid.v4() }) ([see pattern](https://www.informit.com/articles/article.aspx?p=1398616&seqNum=6)).
 
 <br />
 
-- `middleware(...args: any[]): void`: middleware (app.use(middleware)). Also available for koa like (ctx, next).
+- `static getCorrelationId(): string | number | undefined`: retrieve correlation identifier value, like ContextWrapper.get('correlationId').
+
+<br />
+
+- `static setUserSession(value: { [prop: string]: any } | any): void` : set user, like ContextWrapper.set({ user: {...} }).
+
+<br />
+
+- `static getUserSession(): { [prop: string]: any } | any`: get user, like ContextWrapper.get('user').
+
+<br />
+
+- `middleware(...args: any[]): void`: all of the middlewares and routes setup can set or read context values if it is called after this middleware, like [asyncLocalStorage.run](https://nodejs.org/api/async_context.html#asynclocalstoragerunstore-callback-args) and [Namespace.run](https://github.com/eliabecardoso/cls-hooked#namespaceruncallback).
+
+<br />
+
+Notes:
+- `ContextWrapper.middleware` will only create a request context if `ContextWrapper.getInstance` is called before.
+- Methods `set`, `get`, `set/get CorrelationId`, `set/get UserSession` only works if `instance.run`, `instance.runPromise` or `ContextWrapper.middleware` is called before.
+
+---
+### License
+
+This project is distributed under the MIT license.
 
 ---
 

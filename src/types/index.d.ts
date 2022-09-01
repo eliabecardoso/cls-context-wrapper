@@ -1,3 +1,3 @@
 declare module '@eliabecardoso/cls-hooked';
 
-declare type ObjectRecord = { [k: string]: any };
+declare type ObjectRecord = { [prop: string]: any };

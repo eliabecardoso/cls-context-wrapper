@@ -4,7 +4,7 @@ import { get } from '../utils';
 
 const messages = {
   NOT_FOUND_STORAGE: 'The Storage not exists (destroy called before).',
-  INVALID_KEY: 'The Key is nullable or invalid type.',
+  INVALID_STORE: 'The Store is an invalid type.',
 };
 
 export default class Context {
@@ -23,7 +23,7 @@ export default class Context {
 
     const { store } = checkParams;
 
-    if (typeof store !== 'object') throw new Error(messages.INVALID_KEY);
+    if (typeof store !== 'object') throw new Error(messages.NOT_FOUND_STORAGE);
   }
 
   preset(req: ObjectRecord, res: ObjectRecord): any {
