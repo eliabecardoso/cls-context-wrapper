@@ -1,6 +1,6 @@
 {
   "name": "@ehsc/cls-context-wrapper",
-  "version": "1.0.2",
+  "version": "1.0.7",
   "description": "A wrapper of the cls-hooked and node:asynchooks libs to use as middleware",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -42,7 +42,7 @@
     "continuous local storage wrapper"
   ],
   "dependencies": {
-    "@eliabecardoso/cls-hooked": "^1.0.6",
+    "@ehsc/cls-hooked": "^1.0.0",
     "semver": "^7.3.7",
     "uuid": "^8.3.2"
   },

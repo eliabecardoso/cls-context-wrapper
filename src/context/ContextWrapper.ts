@@ -43,7 +43,7 @@ export default class ContextWrapper {
     instance?.set(store);
   }
 
-  static get(key: string): any | undefined {
+  static get(key?: string): any {
     return instance?.get(key);
   }
 
@@ -59,7 +59,7 @@ export default class ContextWrapper {
     instance?.set({ user: value });
   }
 
-  static getUserSession(): ObjectRecord | any | undefined {
+  static getUserSession(): ObjectRecord | any {
     return instance?.get(USER);
   }
 

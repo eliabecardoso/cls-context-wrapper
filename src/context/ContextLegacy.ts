@@ -1,4 +1,4 @@
-import * as cls from '@eliabecardoso/cls-hooked';
+import * as cls from '@ehsc/cls-hooked';
 import * as uuid from 'uuid';
 import Context from './Context';
 import IContextStrategy, { InstanceParams } from './IContextStrategy';
@@ -15,7 +15,7 @@ export default class ContextLegacy extends Context implements IContextStrategy {
     this.create();
   }
 
-  create(): void {
+  private create(): void {
     if (cls.getNamespace(this.name)) {
       return errorHandler(new Error(`The context ${this.name} already exists. Operation not permitted.`));
     }
@@ -28,11 +28,11 @@ export default class ContextLegacy extends Context implements IContextStrategy {
     this.storage = undefined;
   }
 
-  run(callback: () => any): void {
+  run(callback: (...args: any[]) => void): void {
     this.storage?.run(callback);
   }
 
-  runPromise(callback: () => Promise<any>): void {
+  runPromise(callback: (...args: any[]) => Promise<void>): void {
     this.storage?.runPromise(callback);
   }
 

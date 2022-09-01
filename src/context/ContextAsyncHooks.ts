@@ -11,7 +11,7 @@ export default class ContextAsyncHooks extends Context implements IContextStrate
     this.create();
   }
 
-  create(): void {
+  private create(): void {
     this.storage = new AsyncLocalStorage();
   }
 
@@ -21,16 +21,20 @@ export default class ContextAsyncHooks extends Context implements IContextStrate
     this.storage = undefined;
   }
 
-  run(store: any, callback?: (...args: []) => any): any {
-    if (!callback) return this.storage?.run({} as any, store as () => any);
+  run(store: any, callback?: (...args: []) => void): void {
+    if (!callback) return this.storage?.run({} as any, store as () => void);
 
     return this.storage?.run(store, callback);
   }
 
-  runPromise(store: any, callback?: (...args: []) => Promise<any>): Promise<any> | any {
-    if (!callback) return this.storage?.run({} as any, store as () => Promise<any>);
+  runPromise(store: any, callback?: (...args: []) => Promise<void>): void {
+    if (!callback) {
+      this.storage?.run({} as any, store as () => Promise<void>);
 
-    return this.storage?.run(store, callback);
+      return;
+    }
+
+    this.storage?.run(store, callback);
   }
 
   set(store: ObjectRecord): boolean | void {
@@ -39,7 +43,9 @@ export default class ContextAsyncHooks extends Context implements IContextStrate
     this.storage?.enterWith({ ...this.storage?.getStore(), ...(store as any) });
   }
 
-  get(key?: string): any | undefined {
+  get(key?: string): any {
+    super.check(this.storage);
+
     const store = this.storage?.getStore() as any;
 
     if (typeof store === 'object' && key) return store[key];

@@ -1,6 +1,6 @@
 const semver = require("semver");
 
-const nodeIsLower = semver.lt(process.versions.node, '12.17.0');
+const nodeIsLower = semver.lt(process.versions.node, '14.20.0');
 
 const coverageDefaultExclude = ['src/**/*.ts', '!src/**/index(.|.d.)ts'];
 
@@ -14,7 +14,7 @@ module.exports = {
   "verbose": true,
   "silent": true,
   "collectCoverage": true,
-  "collectCoverageFrom": [...coverageDefaultExclude, ...(nodeIsLower ? ['!src/ContextAsyncHooks.ts'] : [])],
+  "collectCoverageFrom": [...coverageDefaultExclude, ...(nodeIsLower ? ['!src/context/ContextAsyncHooks.ts'] : [])],
   "coverageThreshold": {
     "global": {
       "statements": 92,

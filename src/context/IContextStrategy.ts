@@ -3,13 +3,13 @@ export interface InstanceParams {
   options?: Options;
 }
 
-interface TrackingIdConfig {
+interface CorrelationIdConfig {
   enable: boolean;
   valuePath?: string;
 }
 
 export interface Options {
-  correlationId?: TrackingIdConfig;
+  correlationId?: CorrelationIdConfig;
 }
 
 export interface CheckParams {
@@ -21,21 +21,19 @@ export default interface IContextStrategy {
   options?: Options;
   storage?: any;
 
-  create(): void;
-
   destroy(): void;
 
-  run(callback: (...args: any[]) => any): any;
+  run(callback: (...args: any[]) => void): void;
 
-  run(store: any, callback: (...args: any[]) => any): any;
+  run(store: any, callback: (...args: any[]) => void): void;
 
-  runPromise(callback: (...args: any[]) => Promise<any>): Promise<any> | any;
+  runPromise(callback: (...args: any[]) => Promise<void>): void;
 
-  runPromise(store: any, callback: (...args: any[]) => Promise<any>): Promise<any> | any;
+  runPromise(store: any, callback: (...args: any[]) => Promise<void>): void;
 
-  set(store: any): void;
+  set(store: ObjectRecord): void;
 
-  get(key: string): any | undefined;
+  get(key?: string): any;
 
-  use(req: ObjectRecord, res: ObjectRecord, next: (error?: Error) => void): void;
+  use(req: ObjectRecord, res: ObjectRecord, next: () => void): void;
 }
