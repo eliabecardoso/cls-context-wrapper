@@ -14,7 +14,7 @@ module.exports = {
   "verbose": true,
   "silent": true,
   "collectCoverage": true,
-  "collectCoverageFrom": [...coverageDefaultExclude, ...(nodeIsLower ? ['!src/ContextAsyncHooks.ts'] : [])],
+  "collectCoverageFrom": [...coverageDefaultExclude, ...(nodeIsLower ? ['!src/context/ContextAsyncHooks.ts'] : [])],
   "coverageThreshold": {
     "global": {
       "statements": 92,
