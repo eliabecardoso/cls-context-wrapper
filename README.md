@@ -1,10 +1,12 @@
+[![NPM](https://nodei.co/npm/@ehsc/cls-context-wrapper.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/@ehsc/cls-context-wrapper/)
+
 # cls-context-wrapper (Typescript)
 [![Build Status](https://api.travis-ci.com/eliabecardoso/cls-context-wrapper.svg?branch=main)](https://app.travis-ci.com/github/eliabecardoso/cls-context-wrapper)
 
 ---
 ### Continuous-Local-Storage Context Wrapper.
 
-This is a Wrapper of the [cls-hooked library (included fixes!)](https://www.npmjs.com/package/@ehsc/cls-hooked) and [AsyncLocalStorage](https://nodejs.org/api/async_context.html#class-asynclocalstorage).
+This is a Wrapper of the [cls-hooked library (fixes included!)](https://www.npmjs.com/package/@ehsc/cls-hooked) and [AsyncLocalStorage](https://nodejs.org/api/async_context.html#class-asynclocalstorage).
 
 The ContextWrapper class is a singleton instance that uses the cls-hooked or AsyncLocalStorage instance as its own Store.
 
