@@ -1,5 +1,5 @@
 import * as EventEmitter from 'events';
-import * as uuid from 'uuid';
+import { v4 as uuid } from 'uuid';
 import Context from '../../src/context/Context';
 import ContextWrapper from '../../src/context/ContextWrapper';
 import { InstanceParams } from '../../src/context/IContextStrategy';
@@ -29,13 +29,9 @@ describe('ContextWrapper', () => {
     const instance = ContextWrapper.getInstance({ ...instanceParams });
     ContextWrapper.destroy();
 
-    try {
-      instance.set({ prop: 'value' })
-    } catch (err: any) {
-      expect(err.message).toBe('The Storage not exists (destroy called before).');
-    } finally {
-      expect(instance.storage).toBeUndefined();
-    }
+    expect(() => {
+      instance.set({ prop: 'value' });
+    }).toThrow('The Storage not exists (is destroy called before?).');
   });
 
   it('should set a value in the Context instance', (done) => {
@@ -105,11 +101,34 @@ describe('ContextWrapper', () => {
     const instance = ContextWrapper.getInstance({ ...instanceParams });
 
     const middleware = () => {
-      ContextWrapper.setCorrelationId(uuid.v4());
+      ContextWrapper.setCorrelationId(uuid());
     };
 
     const someMethod = () => {
       expect(ContextWrapper.getCorrelationId()?.toString().length).toBe(36);
+    };
+    
+    instance.run(() => {
+      try {
+        middleware();
+        someMethod();
+
+        done();
+      } catch (err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should get the trackingFlowId in the Context instance', (done) => {
+    const instance = ContextWrapper.getInstance({ ...instanceParams });
+
+    const middleware = () => {
+      ContextWrapper.setTrackingFlowId(uuid());
+    };
+
+    const someMethod = () => {
+      expect(ContextWrapper.getTrackingFlowId()?.toString().length).toBe(36);
     };
     
     instance.run(() => {

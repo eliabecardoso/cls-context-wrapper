@@ -29,7 +29,7 @@ describe('ContextAsyncHooks', () => {
     }   
   });
 
-  it('should destroy the storage context', () => {
+  it('should destroy the context storage', () => {
     context = new ContextAsyncHooks({ ...instanceParams });
     context.destroy();
 
@@ -37,7 +37,7 @@ describe('ContextAsyncHooks', () => {
   });
 
   describe('#run', () => {
-    it('should set a value in context namespace', () => {
+    it('should set a value in store', () => {
       context = new ContextAsyncHooks({ ...instanceParams });
   
       context.run(() => {
@@ -46,57 +46,134 @@ describe('ContextAsyncHooks', () => {
       });
     });
   
-    it('should get a value in context namespace', () => {
+    it('should get a value from store', () => {
       context = new ContextAsyncHooks({ ...instanceParams });
       
       context.run(() => {
-        context.set({ key: 'sample' });
+        context.set({ key: 'value' });
   
-        expect(context.get('key')).toBe('sample');
+        expect(context.get('key')).toBe('value');
+      });
+    });
+
+    it('should get whole value from store', () => {
+      context = new ContextAsyncHooks({ ...instanceParams });
+      
+      context.run(() => {
+        context.set({ key: 'value' });
+  
+        expect(context.get()).toMatchObject({ key: 'value' });
       });
     });
   });
 
   describe('#runPromise', () => {
-    it('should set a value in context namespace', async () => {
+    it('should set a value in store', (done) => {
       context = new ContextAsyncHooks({ ...instanceParams });
   
-      await context.runPromise(async () => {
+      context.runPromise(async () => {
         expect(context.set({ key: 'value' })).toBe(undefined);
         expect(context.get('key')).toBe('value');
+
+        done();
       });
 
     });
   
-    it('should get a value in context namespace', async () => {
+    it('should get a value from store', (done) => {
       context = new ContextAsyncHooks({ ...instanceParams });
       
-      await context.runPromise(async () => {
-        context.set({ key: 'sample' });
+      context.runPromise(async () => {
+        context.set({ key: 'value' });
   
-        expect(context.get('key')).toBe('sample');
+        expect(context.get('key')).toBe('value');
+
+        done();
+      });
+    });
+
+    it('should get whole value from store', (done) => {
+      context = new ContextAsyncHooks({ ...instanceParams });
+      
+      context.runPromise(async () => {
+        context.set({ key: 'value' });
+  
+       try {
+        expect(context.get()).toMatchObject({ key: 'value' });
+        
+        done();
+       } catch (error) {
+        done(error);
+       }
+      });
+    });
+
+    it('should set a value in store (option 2)', (done) => {
+      context = new ContextAsyncHooks({ ...instanceParams });
+  
+      context.runPromise({}, async () => {
+        expect(context.set({ key: 'value' })).toBe(undefined);
+        expect(context.get('key')).toBe('value');
+
+        done();
+      });
+
+    });
+  
+    it('should get a value from store (option 2)', (done) => {
+      context = new ContextAsyncHooks({ ...instanceParams });
+      
+      context.runPromise({}, async () => {
+        context.set({ key: 'value' });
+  
+        expect(context.get('key')).toBe('value');
+
+        done();
+      });
+    });
+
+    it('should get whole value from store (option 2)', (done) => {
+      context = new ContextAsyncHooks({ ...instanceParams });
+      
+      context.runPromise({}, async () => {
+        context.set({ key: 'value' });
+  
+       try {
+        expect(context.get()).toMatchObject({ key: 'value' });
+        
+        done();
+       } catch (error) {
+        done(error);
+       }
       });
     });
   });
 
   describe('#use', () => {
-    it('should create a context that can be used by all inner closures', (done: Function) => {
+    it('should create a context that can be used by all inner closures', () => {
       context = new ContextAsyncHooks({ ...instanceParams, options: { correlationId: { enable: true }}});
 
       const req = new EventEmitter();
       const res = new EventEmitter();
       const next = () => {
-        try {
-          expect((context.get('correlationId')).length).toBe(36);
-  
-          done();
-        } catch (err) {
-          done(err);
-        }
-       
+        expect((context.get('correlationId')).length).toBe(36);
       };
 
       context.use(req, res, next);
+    });
+
+    it('should throw an error', () => {
+      context = new ContextAsyncHooks({ ...instanceParams, options: { correlationId: { enable: true }}});
+
+      const req: any = '';
+      const res = new EventEmitter();
+      const next = () => {
+        throw new Error('some error');
+      };
+
+      expect(() => {
+        context.use(req, res, next);
+      }).toThrow('some error');
     });
   });
 });

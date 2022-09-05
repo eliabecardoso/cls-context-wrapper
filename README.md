@@ -138,9 +138,12 @@ Note: The Context class is also available for use in other scenarios.
 - `static getInstance(params?: { name: string; options: object }): IContextStrategy`: create a singleton instance.
   - `params?.name: string`: name of the instance context.
   - `params?.options?: object`: options.
-  - `params?.options?.correlationId?: object`: correlationId config.
-  - `params?.options?.correlationId?.enable: boolean`: to enable automatic set of correlationId in `middleware` method. Default: true (if not passed params in the getInstance method in instance).
-  - `params?.options?.correlationId?.valuePath: string?`: the path if a correlationId already exists in the `req` middleware param, e.g.: 'reqId' or 'headers.reqId'. (only available if middleware method is used). If the valuePath is not passed, the `middleware` method will try to fetch from `headers['X-Correlation-ID']`, `headers['X-Request-ID']` or `requestId` (respectively). Default value: uuid.v4.
+  - `params?.options?.correlationId?: object`: correlationId config. It is used to store a unique id per request.
+  - `params?.options?.correlationId?.enable: boolean`: to enable automatic set of correlationId in `middleware` method. Default: true (if not passed params in the getInstance method in instance). Default value: `true`.
+  - `params?.options?.correlationId?.valuePath: string?`: the path if a correlationId already exists in the `req` middleware param, e.g.: 'reqId' or 'headers.reqId'. (only available if middleware method is used). If the valuePath is not passed, the `middleware` method will try to fetch from `req.headers['Correlation-ID']`, `req.headers['Request-ID']` or `req.requestId` (respectively). Default value: `uuid.v4()`.
+  - `params?.options?.trackingFlowId?: object`: trackingFlowId config. It is used to store the id of an entire flow (e.g.: business flow), ex: Signup (All steps). As it is returned in the http response headers, it can be written to localstorage or any other storage and be used in all requests of an entire flow (e.g.: business logic flow). Default value: `undefined` (You need send a value).
+  - `params?.options?.trackingFlowId?.enable: boolean`: to enable automatic set of trackingFlowId in `middleware` method. Default: true (if not passed params in the getInstance method in instance). Default value: `true`.
+  - `params?.options?.trackingFlowId?.valuePath: string?`: the path if a trackingFlowId already exists in the `req` middleware param, e.g.: 'reqsssssssssId' or 'headers.reqId'. (only available if middleware method is used). If the valuePath is not passed, the `middleware` method will try to fetch from `req.headers['Tracking-Flow-ID']` or `req.trackingFlowId` (respectively).
 
   - Returns an instance that implements the `IContextStrategy` interface, a super set of the [AsyncLocalStorage from node:async_hooks](https://nodejs.org/api/async_context.html#class-asynclocalstorage)(if the Node version is 14.20.0 or major) or [Namespace from cls-hooked lib](https://www.npmjs.com/package/@ehsc/cls-hooked).
   - `IContextStrategy` Methods:
@@ -170,6 +173,14 @@ Note: The Context class is also available for use in other scenarios.
 <br />
 
 - `static getCorrelationId(): string | number | undefined`: retrieve correlation identifier value, like ContextWrapper.get('correlationId').
+
+<br />
+
+- `static setTrackingFlowId(value: string | number): void`: set the tracking flow identifier, like ContextWrapper.set({ trackingFlowId: uuid.v4() }).
+
+<br />
+
+- `static getTrackingFlowId(): string | number | undefined`: retrieve tracking flow identifier value, like ContextWrapper.get('trackingFlowId').
 
 <br />
 

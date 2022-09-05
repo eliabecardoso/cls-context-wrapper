@@ -17,10 +17,10 @@ module.exports = {
   "collectCoverageFrom": [...coverageDefaultExclude, ...(nodeIsLower ? ['!src/context/ContextAsyncHooks.ts'] : [])],
   "coverageThreshold": {
     "global": {
-      "statements": 92,
-      "branches": 69,
+      "statements": 97,
+      "branches": 76,
       "functions": 100,
-      "lines": 90
+      "lines": 100
     }
   }
 }

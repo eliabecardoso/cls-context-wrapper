@@ -3,7 +3,7 @@ import { CheckParams, InstanceParams, Options } from './IContextStrategy';
 import { get } from '../utils';
 
 const messages = {
-  NOT_FOUND_STORAGE: 'The Storage not exists (destroy called before).',
+  NOT_FOUND_STORAGE: 'The Storage not exists (is destroy called before?).',
   INVALID_STORE: 'The Store is an invalid type.',
 };
 
@@ -23,25 +23,48 @@ export default class Context {
 
     const { store } = checkParams;
 
-    if (typeof store !== 'object') throw new Error(messages.NOT_FOUND_STORAGE);
+    if (store && typeof store !== 'object') throw new Error(messages.INVALID_STORE);
   }
 
-  preset(req: ObjectRecord, res: ObjectRecord): any {
-    const presets: ObjectRecord = {};
+  preset({ req = {}, res = {} }: ObjectRecord): any {
+    return {
+      correlationId: this.setupCorrelationId({ req, res }),
+      trackingFlowId: this.setupTrackingFlowId({ req, res }),
+    };
+  }
+
+  private getHeaders(headers: ObjectRecord): ObjectRecord {
+    return Object.entries(headers || {}).reduce((acc, [key, value]) => ({ ...acc, [key.toLowerCase()]: value }), {});
+  }
+
+  private setupCorrelationId({ req, res }: ObjectRecord) {
+    const headers = this.getHeaders(req?.headers);
 
     if (this.options?.correlationId?.enable) {
-      const { valuePath } = this.options?.correlationId;
+      const valuePath = this.options?.correlationId?.valuePath;
 
-      const correlationId: string = req.headers && req.headers['X-Correlation-ID'];
-      const requestId: string = (req.headers && req.headers['X-Request-ID']) || 'requestId';
+      const correlationId: string = headers['correlation-id'];
+      const requestId: string = headers['request-id'];
+      const value = get(req, valuePath || 'correlationId', correlationId || requestId || uuid());
 
-      const value = get(req, valuePath || correlationId || requestId, uuid());
+      if (typeof res.setHeader === 'function') res.setHeader('Correlation-ID', value);
 
-      if (typeof res.setHeader === 'function') res.setHeader('X-Correlation-ID', value);
-
-      presets.correlationId = value;
+      return value;
     }
+  }
 
-    return presets;
+  private setupTrackingFlowId({ req, res }: ObjectRecord) {
+    const headers = this.getHeaders(req?.headers);
+
+    if (this.options?.trackingFlowId?.enable) {
+      const valuePath = this.options?.trackingFlowId?.valuePath;
+
+      const trackingFlowId: string = headers['tracking-flow-id'];
+      const value = get(req, valuePath || 'trackingFlowId', trackingFlowId);
+
+      if (typeof res.setHeader === 'function' && value) res.setHeader('Tracking-Flow-ID', value);
+
+      return value;
+    }
   }
 }
