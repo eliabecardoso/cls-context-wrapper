@@ -1,4 +1,5 @@
 import { AsyncLocalStorage } from 'async_hooks';
+import { messageHandler } from '../utils';
 import Context from './Context';
 import IContextStrategy, { InstanceParams } from './IContextStrategy';
 
@@ -53,17 +54,19 @@ export default class ContextAsyncHooks extends Context implements IContextStrate
     return store;
   }
 
-  use(req: ObjectRecord, res: ObjectRecord, next: (error?: Error) => void): void {
+  use(req: ObjectRecord, res: ObjectRecord, next: (error?: Error | any) => void): void {
     super.check(this.storage);
 
     try {
       this.run({}, () => {
-        const presets = super.preset(req, res);
+        const presets = super.preset({ req, res });
         this.set({ ...presets });
 
         next();
       });
-    } catch (err: any) {
+    } catch (err) {
+      messageHandler('error', err);
+
       next(err);
     }
   }

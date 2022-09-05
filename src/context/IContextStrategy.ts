@@ -8,12 +8,18 @@ interface CorrelationIdConfig {
   valuePath?: string;
 }
 
+interface TrackingFlowIdConfig {
+  enable: boolean;
+  valuePath?: string;
+}
+
 export interface Options {
   correlationId?: CorrelationIdConfig;
+  trackingFlowId?: TrackingFlowIdConfig;
 }
 
 export interface CheckParams {
-  store: ObjectRecord;
+  store?: ObjectRecord;
 }
 
 export default interface IContextStrategy {

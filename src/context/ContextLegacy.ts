@@ -1,10 +1,7 @@
 import * as cls from '@ehsc/cls-hooked';
-import * as uuid from 'uuid';
+import { messageHandler } from '../utils';
 import Context from './Context';
 import IContextStrategy, { InstanceParams } from './IContextStrategy';
-import * as utils from '../utils';
-
-const { errorHandler } = utils;
 
 export default class ContextLegacy extends Context implements IContextStrategy {
   storage?: ObjectRecord;
@@ -17,7 +14,7 @@ export default class ContextLegacy extends Context implements IContextStrategy {
 
   private create(): void {
     if (cls.getNamespace(this.name)) {
-      return errorHandler(new Error(`The context ${this.name} already exists. Operation not permitted.`));
+      return messageHandler('error', new Error(`The context ${this.name} already exists. Operation not permitted.`));
     }
 
     this.storage = cls.createNamespace(this.name || 'MyApp');
@@ -48,7 +45,7 @@ export default class ContextLegacy extends Context implements IContextStrategy {
     return this.storage?.get(key);
   }
 
-  use(req: ObjectRecord, res: ObjectRecord, next: () => any): void {
+  use(req: ObjectRecord, res: ObjectRecord, next: (error?: Error | any) => any): void {
     super.check(this.storage);
 
     try {
@@ -56,15 +53,15 @@ export default class ContextLegacy extends Context implements IContextStrategy {
       this.storage?.bindEmitter(res);
 
       this.run(() => {
-        const presets = super.preset(req, res);
+        const presets = super.preset({ req, res });
         this.set({ ...presets });
 
         next();
       });
-    } catch (err: any) {
-      errorHandler(err as Error);
+    } catch (err) {
+      messageHandler('error', err);
 
-      next();
+      next(err);
     }
   }
 }

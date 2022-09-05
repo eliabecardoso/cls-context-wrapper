@@ -98,5 +98,19 @@ describe('ContextLegacy', () => {
 
       context.use(req, res, next);
     });
+
+    it('should throw an error', () => {
+      context = new ContextLegacy({ ...instanceParams, options: { correlationId: { enable: true }}});
+
+      const req: any = '';
+      const res = new EventEmitter();
+      const next = () => {
+        throw new Error('some error');
+      };
+
+      expect(() => {
+        context.use(req, res, next);
+      }).toThrow('some error');
+    });
   });
 });

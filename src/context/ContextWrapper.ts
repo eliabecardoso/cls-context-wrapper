@@ -2,27 +2,31 @@ import * as semver from 'semver';
 import ContextAsyncHooks from './ContextAsyncHooks';
 import ContextLegacy from './ContextLegacy';
 import IContextStrategy, { InstanceParams } from './IContextStrategy';
-import { errorHandler, middlewareStrategy } from '../utils';
+import { messageHandler, middlewareStrategy } from '../utils';
 
 /**
  * @type {IContextStrategy}
  */
 let instance: IContextStrategy | null;
 const CORRELATION_ID = 'correlationId';
+const TRACKING_FLOW_ID = 'trackingFlowId';
 const USER = 'user';
 
 export default class ContextWrapper {
   static getInstance(params?: InstanceParams): IContextStrategy {
     if (!instance) {
-      const props: InstanceParams = { name: 'MyApp', options: { correlationId: { enable: true } } };
-
       if (!params?.name) {
-        errorHandler(new Error('[ContextWrapper] Missed passing name param. Default Name: MyApp'));
+        messageHandler('warn', '[ContextWrapper] Missed passing name param. Default Name: MyApp');
       }
 
-      if (params?.name) props.name = params.name;
-
-      if (params?.options) props.options = params.options;
+      const props: InstanceParams = {
+        name: 'MyApp',
+        options: {
+          correlationId: { enable: true },
+          trackingFlowId: { enable: false },
+        },
+        ...params,
+      };
 
       instance = ContextWrapper.createInstance(props);
     }
@@ -53,6 +57,14 @@ export default class ContextWrapper {
 
   static getCorrelationId(): string | number | undefined {
     return instance?.get(CORRELATION_ID);
+  }
+
+  static setTrackingFlowId(value: string | number): void {
+    instance?.set({ trackingFlowId: value });
+  }
+
+  static getTrackingFlowId(): string | number | undefined {
+    return instance?.get(TRACKING_FLOW_ID);
   }
 
   static setUserSession(value: ObjectRecord | any): void {
