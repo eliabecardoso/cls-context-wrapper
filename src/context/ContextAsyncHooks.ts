@@ -38,7 +38,7 @@ export default class ContextAsyncHooks extends Context implements IContextStrate
     this.storage?.run(store, callback);
   }
 
-  set(store: ObjectRecord): boolean | void {
+  set(store: Record<string, any>): boolean | void {
     this.check(this.storage, { store });
 
     this.storage?.enterWith({ ...this.storage?.getStore(), ...(store as any) });
@@ -54,7 +54,7 @@ export default class ContextAsyncHooks extends Context implements IContextStrate
     return store;
   }
 
-  use(req: ObjectRecord, res: ObjectRecord, next: (error?: Error | any) => void): void {
+  use(req: Record<string, any>, res: Record<string, any>, next: (error?: Error | any) => void): void {
     super.check(this.storage);
 
     try {

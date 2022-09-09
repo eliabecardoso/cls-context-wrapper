@@ -2,7 +2,7 @@ import * as semver from 'semver';
 
 const devEnvs = ['dev', 'develop', 'development', 'test'];
 
-export const get = (object: ObjectRecord = {}, keys: string | string[], defaultVal?: any): any => {
+export const get = (object: Record<string, any> = {}, keys: string | string[], defaultVal?: any): any => {
   const auxKeys: string[] = Array.isArray(keys) ? keys : keys.split('.');
   const auxObject = object[auxKeys[0]];
 
@@ -21,7 +21,7 @@ export const messageHandler = (mType: messageType, message: Error | any) => {
   }
 };
 
-export const middlewareStrategy = (...args: any[]): { req: ObjectRecord; res: ObjectRecord; next: () => any } => {
+export const middlewareStrategy = (...args: any[]): { req: Record<string, any>; res: Record<string, any>; next: () => any } => {
   if (args[0] && args[0].req) return { req: args[0].req, res: args[0].req, next: args[1] };
 
   return { req: args[0], res: args[1], next: args[2] };

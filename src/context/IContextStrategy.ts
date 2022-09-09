@@ -19,7 +19,7 @@ export interface Options {
 }
 
 export interface CheckParams {
-  store?: ObjectRecord;
+  store?: Record<string, any>;
 }
 
 export default interface IContextStrategy {
@@ -37,9 +37,9 @@ export default interface IContextStrategy {
 
   runPromise(store: any, callback: () => Promise<void>): void;
 
-  set(store: ObjectRecord): void;
+  set(store: Record<string, any>): void;
 
   get(key?: string): any;
 
-  use(req: ObjectRecord, res: ObjectRecord, next: () => void): void;
+  use(req: Record<string, any>, res: Record<string, any>, next: () => void): void;
 }
