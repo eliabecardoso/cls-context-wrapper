@@ -1,6 +1,6 @@
 {
   "name": "@ehsc/cls-context-wrapper",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A wrapper of the cls-hooked and node:asynchooks libs to use as middleware",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
