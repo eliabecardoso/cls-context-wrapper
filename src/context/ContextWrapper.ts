@@ -35,7 +35,7 @@ export default class ContextWrapper {
   }
 
   private static createInstance(props: InstanceParams): IContextStrategy {
-    return semver.gte(process.versions.node, '14.20.0') ? new ContextAsyncHooks(props) : new ContextLegacy(props);
+    return semver.gte(process.versions.node, '16.17.0') ? new ContextAsyncHooks(props) : new ContextLegacy(props);
   }
 
   static destroy(): void {
