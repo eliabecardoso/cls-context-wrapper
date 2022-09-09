@@ -1,6 +1,6 @@
-const semver = require("semver");
+const semver = require('semver');
 
-const nodeIsLower = semver.lt(process.versions.node, '14.20.0');
+const pickLegacy = () => semver.lt(process.versions.node, '16.17.0');
 
 const coverageDefaultExclude = ['src/**/*.ts', '!src/**/index(.|.d.)ts'];
 
@@ -10,11 +10,11 @@ module.exports = {
   },
   "testRegex": "(/tests/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
   "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"],
-  "modulePathIgnorePatterns": ["tests/performance", ...(nodeIsLower ? ['tests/unit/ContextAsyncHooks.test.ts'] : [])],
+  "modulePathIgnorePatterns": ["tests/performance", ...(pickLegacy() ? ['tests/unit/ContextAsyncHooks.test.ts'] : [])],
   "verbose": true,
   "silent": true,
   "collectCoverage": true,
-  "collectCoverageFrom": [...coverageDefaultExclude, ...(nodeIsLower ? ['!src/context/ContextAsyncHooks.ts'] : [])],
+  "collectCoverageFrom": [...coverageDefaultExclude, ...(pickLegacy() ? ['!src/context/ContextAsyncHooks.ts'] : [])],
   "coverageThreshold": {
     "global": {
       "statements": 97,

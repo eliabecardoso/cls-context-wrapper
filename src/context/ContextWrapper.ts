@@ -1,8 +1,7 @@
-import * as semver from 'semver';
 import ContextAsyncHooks from './ContextAsyncHooks';
 import ContextLegacy from './ContextLegacy';
 import IContextStrategy, { InstanceParams } from './IContextStrategy';
-import { messageHandler, middlewareStrategy } from '../utils';
+import { messageHandler, middlewareStrategy, pickLegacy } from '../utils';
 
 /**
  * @type {IContextStrategy}
@@ -35,7 +34,7 @@ export default class ContextWrapper {
   }
 
   private static createInstance(props: InstanceParams): IContextStrategy {
-    return semver.gte(process.versions.node, '14.20.0') ? new ContextAsyncHooks(props) : new ContextLegacy(props);
+    return pickLegacy() ? new ContextLegacy(props) : new ContextAsyncHooks(props);
   }
 
   static destroy(): void {

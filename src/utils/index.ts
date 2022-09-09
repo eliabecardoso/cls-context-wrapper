@@ -1,3 +1,5 @@
+import * as semver from 'semver';
+
 const devEnvs = ['dev', 'develop', 'development', 'test'];
 
 export const get = (object: ObjectRecord = {}, keys: string | string[], defaultVal?: any): any => {
@@ -24,3 +26,5 @@ export const middlewareStrategy = (...args: any[]): { req: ObjectRecord; res: Ob
 
   return { req: args[0], res: args[1], next: args[2] };
 };
+
+export const pickLegacy = () => semver.lt(process.versions.node, '16.17.0');
