@@ -80,7 +80,7 @@ describe('express', () => {
 
           expect(res.statusCode).toBe(200);
           expect((res.headers[CORRELATION_ID] || '').length).toBe(36);
-          expect((res.headers[TRACKING_FLOW_ID] || '').length).toBe(36);
+          expect((res.headers[TRACKING_FLOW_ID])).toBe(undefined);
           expect(result.user).toMatchObject({ id: 1, user: 'ecardoso' });
           expect(result.corporation).toBe('EHSC');
           expect(result.foo).toBe('bar');

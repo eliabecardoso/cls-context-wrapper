@@ -60,9 +60,9 @@ export default class Context {
       const valuePath = this.options?.trackingFlowId?.valuePath;
 
       const trackingFlowId: string = headers['tracking-flow-id'];
-      const value = get(req, valuePath || 'trackingFlowId', trackingFlowId || uuid());
+      const value = get(req, valuePath || 'trackingFlowId', trackingFlowId);
 
-      if (typeof res.setHeader === 'function') res.setHeader('Tracking-Flow-ID', value);
+      if (typeof res.setHeader === 'function' && value) res.setHeader('Tracking-Flow-ID', value);
 
       return value;
     }

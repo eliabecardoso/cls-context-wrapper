@@ -3,7 +3,7 @@ language: node_js
 
 # Set the Node.js version you’d like Travis to use. Add more versions as you like.
 node_js:
-- 12.17
+- 12.22.12
 - 14.20
 - 16.17
 
