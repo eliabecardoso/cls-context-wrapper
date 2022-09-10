@@ -91,7 +91,13 @@ describe('ContextAsyncHooks', () => {
         options: { trackingFlowId: { enable: true } }
       });
 
-      expect((contextBase.preset({}).trackingFlowId || '').length).toBe(36);
+      const req: Record<string, any>  = {
+        headers: {
+          'Tracking-Flow-ID': uuid(),
+        },
+      }
+
+      expect((contextBase.preset({ req, res: {} }).trackingFlowId || '').length).toBe(36);
     });
 
     it('should return an object with trackingFlowId from valuePath', () => {
