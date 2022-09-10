@@ -4,7 +4,7 @@ import Context from './Context';
 import IContextStrategy, { InstanceParams } from './IContextStrategy';
 
 export default class ContextLegacy extends Context implements IContextStrategy {
-  storage?: ObjectRecord;
+  storage?: Record<string, any>;
 
   constructor(params: InstanceParams) {
     super({ ...params });
@@ -33,7 +33,7 @@ export default class ContextLegacy extends Context implements IContextStrategy {
     this.storage?.runPromise(callback);
   }
 
-  set(store: ObjectRecord): void {
+  set(store: Record<string, any>): void {
     this.check(this.storage, { store });
 
     Object.entries(store).forEach(([key, value]) => this.storage?.set(key, value));
@@ -45,7 +45,7 @@ export default class ContextLegacy extends Context implements IContextStrategy {
     return this.storage?.get(key);
   }
 
-  use(req: ObjectRecord, res: ObjectRecord, next: (error?: Error | any) => any): void {
+  use(req: Record<string, any>, res: Record<string, any>, next: (error?: Error | any) => any): void {
     super.check(this.storage);
 
     try {

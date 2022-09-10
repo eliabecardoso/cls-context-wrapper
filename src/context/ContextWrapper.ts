@@ -42,7 +42,7 @@ export default class ContextWrapper {
     instance = null;
   }
 
-  static set(store: ObjectRecord): void {
+  static set(store: Record<string, any>): void {
     instance?.set(store);
   }
 
@@ -66,11 +66,11 @@ export default class ContextWrapper {
     return instance?.get(TRACKING_FLOW_ID);
   }
 
-  static setUserSession(value: ObjectRecord | any): void {
+  static setUserSession(value: Record<string, any> | any): void {
     instance?.set({ user: value });
   }
 
-  static getUserSession(): ObjectRecord | any {
+  static getUserSession(): Record<string, any> | any {
     return instance?.get(USER);
   }
 

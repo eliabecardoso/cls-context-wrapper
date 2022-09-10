@@ -26,18 +26,18 @@ export default class Context {
     if (store && typeof store !== 'object') throw new Error(messages.INVALID_STORE);
   }
 
-  preset({ req = {}, res = {} }: ObjectRecord): any {
+  preset({ req = {}, res = {} }: Record<string, any>): any {
     return {
       correlationId: this.setupCorrelationId({ req, res }),
       trackingFlowId: this.setupTrackingFlowId({ req, res }),
     };
   }
 
-  private getHeaders(headers: ObjectRecord): ObjectRecord {
+  private getHeaders(headers: Record<string, any>): Record<string, any> {
     return Object.entries(headers || {}).reduce((acc, [key, value]) => ({ ...acc, [key.toLowerCase()]: value }), {});
   }
 
-  private setupCorrelationId({ req, res }: ObjectRecord) {
+  private setupCorrelationId({ req, res }: Record<string, any>) {
     const headers = this.getHeaders(req?.headers);
 
     if (this.options?.correlationId?.enable) {
@@ -53,7 +53,7 @@ export default class Context {
     }
   }
 
-  private setupTrackingFlowId({ req, res }: ObjectRecord) {
+  private setupTrackingFlowId({ req, res }: Record<string, any>) {
     const headers = this.getHeaders(req?.headers);
 
     if (this.options?.trackingFlowId?.enable) {
