@@ -1,6 +1,8 @@
 import * as EventEmitter from 'events';
 import { v4 as uuid } from 'uuid';
 import Context from '../../src/context/Context';
+import ContextAsyncHooks from '../../src/context/ContextAsyncHooks';
+import ContextLegacy from '../../src/context/ContextLegacy';
 import ContextWrapper from '../../src/context/ContextWrapper';
 import { InstanceParams } from '../../src/context/IContextStrategy';
 
@@ -23,6 +25,18 @@ describe('ContextWrapper', () => {
     const instance = ContextWrapper.getInstance();
 
     expect(instance).toBeInstanceOf(Context);
+  });
+
+  it('should create instance using mode options - legacy', () => {
+    const instance = ContextWrapper.getInstance({ ...instanceParams, mode: 'legacy' });
+
+    expect(instance).toBeInstanceOf(ContextLegacy);
+  });
+
+  it('should create instance using mode options - modern', () => {
+    const instance = ContextWrapper.getInstance({ ...instanceParams, mode: 'modern' });
+
+    expect(instance).toBeInstanceOf(ContextAsyncHooks);
   });
 
   it('should destroy the instance of Context class', () => {

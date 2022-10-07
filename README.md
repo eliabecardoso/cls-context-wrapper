@@ -137,6 +137,7 @@ Note: The Context class is also available for use in other scenarios.
 
 - `static getInstance(params?: { name: string; options: object }): IContextStrategy`: create a singleton instance.
   - `params?.name: string`: name of the instance context.
+  - `params?.mode: 'legacy'|'modern'`: you can choose modern or legacy instance. If you don't want to choose, the lib will check the node version. 16.17.0 or lower will choose the legacy instance. The 'modern' instance only works from node version 12.20 (experimental / unstable).
   - `params?.options?: object`: options.
   - `params?.options?.correlationId?: object`: correlationId config. It is used to store a unique id per request.
   - `params?.options?.correlationId?.enable: boolean`: to enable automatic set of correlationId in `middleware` method. Default: true (if not passed params in the getInstance method in instance). Default value: `true`.
