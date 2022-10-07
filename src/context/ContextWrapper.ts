@@ -37,7 +37,7 @@ export default class ContextWrapper {
     if (props.mode) {
       return props.mode === 'legacy' ? new ContextLegacy(props) : new ContextAsyncHooks(props);
     }
- 
+
     return pickLegacy() ? new ContextLegacy(props) : new ContextAsyncHooks(props);
   }
 
