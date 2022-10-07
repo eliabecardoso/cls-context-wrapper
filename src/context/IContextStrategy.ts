@@ -1,5 +1,6 @@
 export interface InstanceParams {
   name: string;
+  mode?: 'legacy' | 'modern';
   options?: Options;
 }
 

@@ -34,6 +34,10 @@ export default class ContextWrapper {
   }
 
   private static createInstance(props: InstanceParams): IContextStrategy {
+    if (props.mode) {
+      return props.mode === 'legacy' ? new ContextLegacy(props) : new ContextAsyncHooks(props);
+    }
+
     return pickLegacy() ? new ContextLegacy(props) : new ContextAsyncHooks(props);
   }
 
